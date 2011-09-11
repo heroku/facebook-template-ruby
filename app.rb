@@ -7,7 +7,7 @@ FACEBOOK_SCOPE = 'email, status_update, publish_stream, publish_actions, user_li
 
 helpers do
   def url(path)
-    base = "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
     base + path
   end
 
