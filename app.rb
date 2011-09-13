@@ -5,6 +5,10 @@ enable :sessions
 
 FACEBOOK_SCOPE = 'email, status_update, publish_stream, publish_actions, user_likes, user_photos'
 
+unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
+  abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
+end
+
 helpers do
   def url(path)
     base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
