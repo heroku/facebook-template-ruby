@@ -28,7 +28,7 @@ helpers do
   end
 
   def first_column(item, collection)
-    return ' class="first-column"' if collection.index(item)%5 == 0
+    return ' class="first-column"' if collection.index(item)%4 == 0
   end
 end
 
@@ -43,9 +43,9 @@ get "/" do
   @user = Mogli::User.find("me", @client)
 
   # access friends, photos and likes directly through the user instance
-  @friends = @user.friends[0, 3]
-  @photos  = @user.photos[0, 2]
-  @likes   = @user.likes[0, 11]
+  @friends = @user.friends[0, 4]
+  @photos  = @user.photos[0, 16]
+  @likes   = @user.likes[0, 4]
 
   # for other data you can always run fql
   @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
