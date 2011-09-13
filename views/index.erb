@@ -17,33 +17,39 @@
     <meta property="og:image" content=""/>
     <meta property="og:site_name" content=""/>
     <meta property="fb:app_id" content="<%= @app.id %>" />
-  <script type="text/javascript">
-    function popup(pageURL, title,w,h) {
-      var left = (screen.width/2)-(w/2);
-      var top = (screen.height/2)-(h/2);
-      var targetWin = window.open(
-        pageURL,
-        title,
-        'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left
-        );
-    }
-  </script>
+    <script>
+      function popup(pageURL, title,w,h) {
+        var left = (screen.width/2)-(w/2);
+        var top = (screen.height/2)-(h/2);
+        var targetWin = window.open(
+          pageURL,
+          title,
+          'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left
+          );
+      }
+    </script>
+    <!--[if IE]>
+      <script>
+        var tags = ['header', 'section'];
+        while(tags.length)
+          document.createElement(tags.pop());
+      </script>
+    <![endif]-->
   </head>
   <body>
     <header class="clearfix">
-    
-      <a
-        href="#"
-        onclick="window.open('http://www.facebook.com/<%= @user.id %>')">
+      <p id="picture">
         <img
           src="https://graph.facebook.com/me/picture?type=large&access_token=<%= @client.access_token %>"
           height="64"
         />
-      </a>
-
+      </p>
       <div>
         <h1>Welcome, <strong><%= @user.name %></strong></h1>
-        <p class="tagline">This app is named <%= @app.name %></p>
+        <p class="tagline">
+          This is your app
+          <a href="<%= @app.link %>"><%= @app.name %></a>
+        </p>
         <div id="share-app">
           <p>Share your app:</p>
           <ul>
@@ -63,7 +69,7 @@
     </header>
     <section id="get-started">
       <p>Welcome to your Facebook app, running on <span>heroku</span>!</p>
-      <a href="http://devcenter.heroku.com/articles/facebook" class="button">Learn how to edit this app</a>
+      <a href="http://devcenter.heroku.com/articles/facebook" class="button">Learn How to Edit This App</a>
     </section>
 
     <section id="samples" class="clearfix">
@@ -73,10 +79,9 @@
         <h3>A few of your friends</h3>
         <ul class="friends">
           <% @friends.each do |friend| %>
-            <li style="background-image: url(https://graph.facebook.com/<%= friend.id %>/picture?type=small)">
-              <a href="#" onclick="window.open('http://www.facebook.com/<%= friend.id %>')">
-                <%= friend.name %>
-              </a>
+            <li style="background-image: url()">
+            <img src="https://graph.facebook.com/<%= friend.id %>/picture?type=square" alt="<%= friend.name %>">
+              <%= friend.name %>
             </li>
           <% end %>
         </ul>
@@ -86,9 +91,8 @@
         <h3>Recent photos</h3>
         <ul class="photos">
           <% @photos.each do |photo| %>
-              <a href="#" onclick="window.open('http://www.facebook.com/<%= photo.id %>')">
-                <img src="<%= photo.source %>" width="163" />
-              </a>
+            <li<%= first_column(photo, @photos) %>>
+              <img src="<%= photo.source %>" alt="<%= photo.name %>">
             </li>
           <% end %>
         </ul>
@@ -99,9 +103,8 @@
         <ul class="things">
           <% @likes.each do |like| %>
             <li>
-              <a href="#" onclick="window.open('http://www.facebook.com/<%= like.id %>')">
-                <%= like.name %>
-              </a>
+              <img src="https://graph.facebook.com/<%= like.id %>/picture?type=square" alt="<%= like.name %>">
+              <%= like.name %>
             </li>
           <% end %>
         </ul>
@@ -111,10 +114,9 @@
         <h3>Friends using this app</h3>
         <ul class="friends">
           <% @friends_using_app.each do |friend_result| %>
-            <li style="background-image: url(<%= friend_result['pic_square'] %>)">
-              <a href="#" onclick="window.open('http://www.facebook.com/<%= friend_result['uid'] %>')">
-                <%= friend_result['name'] %>
-              </a>
+            <li style="background-image: url()">
+              <img src="<%= friend_result['pic_square'] %>" alt="<%= friend_result['name'] %>">
+              <%= friend_result['name'] %>
             </li>
           <% end %>
         </ul>

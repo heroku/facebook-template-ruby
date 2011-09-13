@@ -26,6 +26,10 @@ helpers do
   def authenticator
     @authenticator ||= Mogli::Authenticator.new(ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_SECRET"], url("/auth/facebook/callback"))
   end
+
+  def first_column(item, collection)
+    return ' class="first-column"' if collection.index(item)%5 == 0
+  end
 end
 
 get "/" do
