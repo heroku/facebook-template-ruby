@@ -2,6 +2,8 @@ require "sinatra"
 require "mogli"
 
 enable :sessions
+set :raise_errors, false
+set :show_exceptions, false
 
 FACEBOOK_SCOPE = 'email, status_update, publish_stream, publish_actions, user_likes, user_photos'
 
@@ -30,6 +32,12 @@ helpers do
   def first_column(item, collection)
     return ' class="first-column"' if collection.index(item)%4 == 0
   end
+end
+
+# the facebook session expired! reset ours and restart the process
+error(Mogli::Client::HTTPException) do
+  session[:at] = nil
+  redirect "/auth/facebook"
 end
 
 get "/" do
