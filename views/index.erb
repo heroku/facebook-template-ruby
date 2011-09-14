@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 
     <title><%= @app.name %></title>
-    <link rel="stylesheet" href="stylesheets/screen.css" media="screen">
+    <link rel="stylesheet" href="/stylesheets/screen.css" media="screen">
 
     <!-- These are Open Graph tags.  They add meta data to your  -->
     <!-- site that facebook uses when your content is shared     -->
@@ -38,7 +38,7 @@
   </head>
   <body>
     <header class="clearfix">
-      <p id="picture" style="background: url(https://graph.facebook.com/me/picture?type=normal&access_token=<%= @client.access_token %>)"></p>
+      <p id="picture" style="background-image: url(https://graph.facebook.com/me/picture?type=normal&access_token=<%= @client.access_token %>)"></p>
       <div>
         <h1>Welcome, <strong><%= @user.name %></strong></h1>
         <p class="tagline">
@@ -74,9 +74,11 @@
         <h3>A few of your friends</h3>
         <ul class="friends">
           <% @friends.each do |friend| %>
-            <li style="background-image: url()">
-            <img src="https://graph.facebook.com/<%= friend.id %>/picture?type=square" alt="<%= friend.name %>">
-              <%= friend.name %>
+            <li>
+              <a href="#" onclick="window.open('http://www.facebook.com/<%= friend.id %>')">
+                <img src="https://graph.facebook.com/<%= friend.id %>/picture?type=square" alt="<%= friend.name %>">
+                <%= friend.name %>
+              </a>
             </li>
           <% end %>
         </ul>
@@ -86,8 +88,10 @@
         <h3>Recent photos</h3>
         <ul class="photos">
           <% @photos.each do |photo| %>
-            <li<%= first_column(photo, @photos) %>>
-              <img src="<%= photo.source %>" alt="<%= photo.name %>">
+            <li style="background-image: url(<%= photo.picture %>)"<%= first_column(photo, @photos) %>>
+              <a href="#" onclick="window.open('http://www.facebook.com/<%= photo.id %>')">
+                <%= photo.name %>
+              </a>
             </li>
           <% end %>
         </ul>
@@ -98,8 +102,10 @@
         <ul class="things">
           <% @likes.each do |like| %>
             <li>
-              <img src="https://graph.facebook.com/<%= like.id %>/picture?type=square" alt="<%= like.name %>">
-              <%= like.name %>
+              <a href="#" onclick="window.open('http://www.facebook.com/<%= like.id %>')">
+                <img src="https://graph.facebook.com/<%= like.id %>/picture?type=square" alt="<%= like.name %>">
+                <%= like.name %>
+              </a>
             </li>
           <% end %>
         </ul>
@@ -109,9 +115,11 @@
         <h3>Friends using this app</h3>
         <ul class="friends">
           <% @friends_using_app.each do |friend_result| %>
-            <li style="background-image: url()">
-              <img src="<%= friend_result['pic_square'] %>" alt="<%= friend_result['name'] %>">
-              <%= friend_result['name'] %>
+            <li>
+              <a href="#" onclick="window.open('http://www.facebook.com/<%= friend_result['uid'] %>')">
+                <img src="<%= friend_result['pic_square'] %>" alt="<%= friend_result['name'] %>">
+                <%= friend_result['name'] %>
+              </a>
             </li>
           <% end %>
         </ul>
