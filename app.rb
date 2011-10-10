@@ -18,6 +18,13 @@ unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
 end
 
+before do
+  # HTTPS redirect
+  unless request.scheme == 'https'
+    redirect "https://#{request.env['HTTP_HOST']}"
+  end
+end
+
 helpers do
   def url(path)
     base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
