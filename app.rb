@@ -20,7 +20,7 @@ end
 
 before do
   # HTTPS redirect
-  unless request.scheme == 'https'
+  if settings.environment == :production && request.scheme != 'https'
     redirect "https://#{request.env['HTTP_HOST']}"
   end
 end
