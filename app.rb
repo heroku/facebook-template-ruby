@@ -26,7 +26,7 @@ before do
 end
 
 helpers do
-  def url(path)
+  def url(path = '')
     base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
     base + path
   end
