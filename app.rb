@@ -26,9 +26,20 @@ before do
 end
 
 helpers do
+  def host
+    request.env['HTTP_HOST']
+  end
+
+  def scheme
+    request.scheme
+  end
+
+  def url_no_scheme(path = '')
+    "//#{host}#{path}"
+  end
+
   def url(path = '')
-    base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
-    base + path
+    "#{scheme}://#{host}#{path}"
   end
 
   def post_to_wall_url
@@ -55,7 +66,6 @@ error(Mogli::Client::HTTPException) do
 end
 
 get "/" do
-  redirect "/auth/facebook" unless session[:at]
   @client = Mogli::Client.new(session[:at])
 
   # limit queries to 15 results
