@@ -72,16 +72,18 @@ get "/" do
   @client.default_params[:limit] = 15
 
   @app  = Mogli::Application.find(ENV["FACEBOOK_APP_ID"], @client)
-  @user = Mogli::User.find("me", @client)
 
-  # access friends, photos and likes directly through the user instance
-  @friends = @user.friends[0, 4]
-  @photos  = @user.photos[0, 16]
-  @likes   = @user.likes[0, 4]
+  if session[:at]
+    @user = Mogli::User.find("me", @client)
 
-  # for other data you can always run fql
-  @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+    # access friends, photos and likes directly through the user instance
+    @friends = @user.friends[0, 4]
+    @photos  = @user.photos[0, 16]
+    @likes   = @user.likes[0, 4]
 
+    # for other data you can always run fql
+    @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+  end
   erb :index
 end
 

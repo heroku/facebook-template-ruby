@@ -128,16 +128,113 @@
     </script>
 
     <header class="clearfix">
-            <div>
-        <h1>Welcome</h1>
-        <div class="fb-login-button" data-scope="user_likes,user_photos"></div>
-      </div>
-          </header>
+      <% if @user %>
+          <p id="picture" style="background-image: url(https://graph.facebook.com/<%= @user.id %>/picture?type=normal)"></p>
+          <div>
+            <h1>Welcome, <strong><%= @user.name %></strong></h1>
+            <p class="tagline">
+              This is your app
+              <a href="<%= @app.link %>"><%= @app.name %></a>
+            </p>
+            <div id="share-app">
+              <p>Share your app:</p>
+              <ul>
+                <li>
+                  <a href="#" class="facebook-button" id="postToWall" data-url="<%= url %>">
+                    <span class="plus">Post to Wall</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="facebook-button speech-bubble" id="sendToFriends" data-url="<%= url %>">
+                    <span class="speech-bubble">Send Message</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="facebook-button apprequests" id="sendRequest" data-message="Test this awesome app">
+                    <span class="apprequests">Send Requests</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+      <% else %>
+        <div>
+          <h1>Welcome</h1>
+            <a href='/auth/facebook' class="fb_button fb_button_medium">
+              <span class="fb_button_text">Log In</span>
+            </a>
+        </div>
+
+      <% end %>
+    </header>
 
     <section id="get-started">
       <p>Welcome to your Facebook app, running on <span>heroku</span>!</p>
       <a href="https://devcenter.heroku.com/articles/facebook" target="_top" class="button">Learn How to Edit This App</a>
     </section>
+
+
+    <% if @user %>
+    <section id="samples" class="clearfix">
+          <h1>Examples of the Facebook Graph API</h1>
+
+          <div class="list">
+            <h3>A few of your friends</h3>
+            <ul class="friends">
+              <% @friends.each do |friend| %>
+                <li>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend.id %>')">
+                    <img src="https://graph.facebook.com/<%= friend.id %>/picture?type=square" alt="<%= friend.name %>">
+                    <%= friend.name %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+
+          <div class="list inline">
+            <h3>Recent photos</h3>
+            <ul class="photos">
+              <% @photos.each do |photo| %>
+                <li style="background-image: url(<%= photo.picture %>)"<%= first_column(photo, @photos) %>>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= photo.id %>')">
+                    <%= photo.name %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+
+          <div class="list">
+            <h3>Things you like</h3>
+            <ul class="things">
+              <% @likes.each do |like| %>
+                <li>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= like.id %>')">
+                    <img src="https://graph.facebook.com/<%= like.id %>/picture?type=square" alt="<%= like.name %>">
+                    <%= like.name %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+
+          <div class="list">
+            <h3>Friends using this app</h3>
+            <ul class="friends">
+              <% @friends_using_app.each do |friend_result| %>
+                <li>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend_result['uid'] %>')">
+                    <img src="<%= friend_result['pic_square'] %>" alt="<%= friend_result['name'] %>">
+                    <%= friend_result['name'] %>
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </section>
+
+    <% end %>
 
 
     <section id="guides" class="clearfix">
