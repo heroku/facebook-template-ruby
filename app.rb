@@ -97,6 +97,11 @@ get "/close" do
   "<body onload='window.close();'/>"
 end
 
+get "/sign_out" do
+  session[:at] = nil
+  redirect '/'
+end
+
 get "/auth/facebook" do
   session[:at] = nil
   redirect authenticator.authorize_url(:scope => FACEBOOK_SCOPE, :display => 'page')
