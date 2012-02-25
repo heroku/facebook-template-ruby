@@ -1,7 +1,7 @@
 source :gemcutter
 
 gem "sinatra"
-gem "mogli"
+gem "koala"
 gem "json"
 gem "httparty"
 gem "thin"

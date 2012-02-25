@@ -1,5 +1,5 @@
 require "sinatra"
-require "mogli"
+require 'koala'
 
 enable :sessions
 set :raise_errors, false
@@ -42,47 +42,33 @@ helpers do
     "#{scheme}://#{host}#{path}"
   end
 
-  def post_to_wall_url
-    "https://www.facebook.com/dialog/feed?redirect_uri=#{url("/close")}&display=popup&app_id=#{@app.id}";
-  end
-
-  def send_to_friends_url
-    "https://www.facebook.com/dialog/send?redirect_uri=#{url("/close")}&display=popup&app_id=#{@app.id}&link=#{url('/')}";
-  end
-
   def authenticator
-    @authenticator ||= Mogli::Authenticator.new(ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_SECRET"], url("/auth/facebook/callback"))
+    @authenticator ||= Koala::Facebook::OAuth.new(ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_SECRET"], url("/auth/facebook/callback"))
   end
 
-  def first_column(item, collection)
-    return ' class="first-column"' if collection.index(item)%4 == 0
-  end
 end
 
 # the facebook session expired! reset ours and restart the process
-error(Mogli::Client::HTTPException) do
-  session[:at] = nil
+error(Koala::Facebook::APIError) do
+  session[:access_token] = nil
   redirect "/auth/facebook"
 end
 
 get "/" do
-  @client = Mogli::Client.new(session[:at])
+  # Get base API Connection
+  @graph  = Koala::Facebook::API.new(session[:access_token])
 
-  # limit queries to 15 results
-  @client.default_params[:limit] = 15
+  # Get public details of current application
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
-  @app  = Mogli::Application.find(ENV["FACEBOOK_APP_ID"], @client)
-
-  if session[:at]
-    @user = Mogli::User.find("me", @client)
-
-    # access friends, photos and likes directly through the user instance
-    @friends = @user.friends[0, 4]
-    @photos  = @user.photos[0, 16]
-    @likes   = @user.likes[0, 4]
+  if session[:access_token]
+    @user    = @graph.get_object("me")
+    @friends = @graph.get_connections('me', 'friends')
+    @photos  = @graph.get_connections('me', 'photos')
+    @likes   = @graph.get_connections('me', 'likes').first(4)
 
     # for other data you can always run fql
-    @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+    @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
   end
   erb :index
 end
@@ -98,17 +84,16 @@ get "/close" do
 end
 
 get "/sign_out" do
-  session[:at] = nil
+  session[:access_token] = nil
   redirect '/'
 end
 
 get "/auth/facebook" do
-  session[:at] = nil
-  redirect authenticator.authorize_url(:scope => FACEBOOK_SCOPE, :display => 'page')
+  session[:access_token] = nil
+  redirect authenticator.url_for_oauth_code
 end
 
 get '/auth/facebook/callback' do
-  client = Mogli::Client.create_from_code_and_authenticator(params[:code], authenticator)
-  session[:at] = client.access_token
-  redirect '/'
+	session[:access_token] = authenticator.get_access_token(params[:code])
+	redirect '/'
 end
