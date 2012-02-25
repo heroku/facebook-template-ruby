@@ -1,18 +1,22 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    addressable (2.2.7)
     crack (0.1.8)
     daemons (1.1.3)
     eventmachine (0.12.10)
-    hashie (1.1.0)
+    faraday (0.7.6)
+      addressable (~> 2.2)
+      multipart-post (~> 1.1)
+      rack (~> 1.1)
     httparty (0.7.8)
       crack (= 0.1.8)
     json (1.5.4)
-    mogli (0.0.32)
-      hashie (~> 1.1.0)
-      httparty (>= 0.4.3)
-      multi_json (~> 1.0.3)
+    koala (1.3.0)
+      faraday (~> 0.7.0)
+      multi_json (~> 1.0)
     multi_json (1.0.3)
+    multipart-post (1.1.5)
     rack (1.3.2)
     sinatra (1.2.6)
       rack (~> 1.1)
@@ -29,6 +33,6 @@ PLATFORMS
 DEPENDENCIES
   httparty
   json
-  mogli
+  koala
   sinatra
   thin
