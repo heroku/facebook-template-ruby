@@ -26,9 +26,20 @@ before do
 end
 
 helpers do
-  def url(path)
-    base = "#{request.scheme}://#{request.env['HTTP_HOST']}"
-    base + path
+  def host
+    request.env['HTTP_HOST']
+  end
+
+  def scheme
+    request.scheme
+  end
+
+  def url_no_scheme(path = '')
+    "//#{host}#{path}"
+  end
+
+  def url(path = '')
+    "#{scheme}://#{host}#{path}"
   end
 
   def post_to_wall_url
@@ -55,23 +66,24 @@ error(Mogli::Client::HTTPException) do
 end
 
 get "/" do
-  redirect "/auth/facebook" unless session[:at]
   @client = Mogli::Client.new(session[:at])
 
   # limit queries to 15 results
   @client.default_params[:limit] = 15
 
   @app  = Mogli::Application.find(ENV["FACEBOOK_APP_ID"], @client)
-  @user = Mogli::User.find("me", @client)
 
-  # access friends, photos and likes directly through the user instance
-  @friends = @user.friends[0, 4]
-  @photos  = @user.photos[0, 16]
-  @likes   = @user.likes[0, 4]
+  if session[:at]
+    @user = Mogli::User.find("me", @client)
 
-  # for other data you can always run fql
-  @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+    # access friends, photos and likes directly through the user instance
+    @friends = @user.friends[0, 4]
+    @photos  = @user.photos[0, 16]
+    @likes   = @user.likes[0, 4]
 
+    # for other data you can always run fql
+    @friends_using_app = @client.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+  end
   erb :index
 end
 
@@ -85,8 +97,13 @@ get "/close" do
   "<body onload='window.close();'/>"
 end
 
+get "/sign_out" do
+  session[:at] = nil
+  redirect '/'
+end
+
 get "/auth/facebook" do
-  session[:at]=nil
+  session[:at] = nil
   redirect authenticator.authorize_url(:scope => FACEBOOK_SCOPE, :display => 'page')
 end
 
