@@ -98,7 +98,7 @@ get "/close" do
 end
 
 get "/auth/facebook" do
-  session[:at]=nil
+  session[:at] = nil
   redirect authenticator.authorize_url(:scope => FACEBOOK_SCOPE, :display => 'page')
 end
 
