@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
 
-    <title><%= @app.name %></title>
+    <title><%= @app['name'] %></title>
     <link rel="stylesheet" href="stylesheets/screen.css" media="Screen" type="text/css" />
     <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px)" type="text/css" />
 
@@ -17,13 +17,13 @@
     <!-- over facebook.  You should fill these tags in with      -->
     <!-- your data.  To learn more about Open Graph, visit       -->
     <!-- 'https://developers.facebook.com/docs/opengraph/'       -->
-    <meta property="og:title" content="<%= @app.name %>" />
+    <meta property="og:title" content="<%= @app['name'] %>" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="<%= url %>" />
     <meta property="og:image" content="<%= url('/logo.png') %>" />
-    <meta property="og:site_name" content="<%= @app.name %>" />
+    <meta property="og:site_name" content="<%= @app['name'] %>" />
     <meta property="og:description" content="My First App" />
-    <meta property="fb:app_id" content="<%= @app.id %>" />
+    <meta property="fb:app_id" content="<%= @app['name'] %>" />
 
     <script type="text/javascript" src="/javascripts/jquery-1.7.1.min.js"></script>
 
@@ -96,11 +96,11 @@
     <script type="text/javascript">
       window.fbAsyncInit = function() {
         FB.init({
-          appId      : '<%= @app.id %>', // App ID
-          channelUrl : '<%= url_no_scheme('/channel.html') %>', // Channel File
-          status     : true, // check login status
-          cookie     : true, // enable cookies to allow the server to access the session
-          xfbml      : true // parse XFBML
+          appId      : "<%= @app['id'] %>",                     // App ID
+          channelUrl : "<%= url_no_scheme('/channel.html') %>", // Channel File
+          status     : true,                                    // check login status
+          cookie     : true,                                    // enable cookies to allow the server to access the session
+          xfbml      : true                                     // parse XFBML
         });
 
         // Listen to the auth.login which will be called when the user logs in
@@ -129,12 +129,12 @@
 
     <header class="clearfix">
       <% if @user %>
-          <p id="picture" style="background-image: url(https://graph.facebook.com/<%= @user.id %>/picture?type=normal)"></p>
+          <p id="picture" style="background-image: url(https://graph.facebook.com/<%= @user['id'] %>/picture?type=normal)"></p>
           <div>
-            <h1>Welcome, <strong><%= @user.name %></strong></h1>
+            <h1>Welcome, <strong><%= @user['name'] %></strong></h1>
             <p class="tagline">
               This is your app
-              <a href="<%= @app.link %>"><%= @app.name %></a>
+              <a href="<%= @app['@app'] %>"><%= @app['name'] %></a>
             </p>
             <div id="share-app">
               <p>Share your app:</p>
@@ -183,9 +183,9 @@
             <ul class="friends">
               <% @friends.each do |friend| %>
                 <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend.id %>')">
-                    <img src="https://graph.facebook.com/<%= friend.id %>/picture?type=square" alt="<%= friend.name %>">
-                    <%= friend.name %>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend['id']%>')">
+                    <img src="https://graph.facebook.com/<%= friend['id'] %>/picture?type=square" alt="<%= friend['name'] %>">
+                    <%= friend['name'] %>
                   </a>
                 </li>
               <% end %>
@@ -195,10 +195,10 @@
           <div class="list inline">
             <h3>Recent photos</h3>
             <ul class="photos">
-              <% @photos.each do |photo| %>
-                <li style="background-image: url(<%= photo.picture %>)"<%= first_column(photo, @photos) %>>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= photo.id %>')">
-                    <%= photo.name %>
+              <% @photos.each_with_index do |photo, index| %>
+                <li style="background-image: url(<%= photo['picture'] %>)" class='<%= 'first-column' if (index%4).zero? %>'>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= photo['id'] %>')">
+                    <%= photo['name'] %>
                   </a>
                 </li>
               <% end %>
@@ -210,9 +210,9 @@
             <ul class="things">
               <% @likes.each do |like| %>
                 <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= like.id %>')">
-                    <img src="https://graph.facebook.com/<%= like.id %>/picture?type=square" alt="<%= like.name %>">
-                    <%= like.name %>
+                  <a href="#" onclick="window.open('http://www.facebook.com/<%= like['id'] %>')">
+                    <img src="https://graph.facebook.com/<%= like['id'] %>/picture?type=square" alt="<%= like['name'] %>">
+                    <%= like['name'] %>
                   </a>
                 </li>
               <% end %>
