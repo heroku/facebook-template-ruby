@@ -22,7 +22,9 @@ before do
   # HTTPS redirect
   if settings.environment == :production && request.scheme != 'https'
     redirect "https://#{request.env['HTTP_HOST']}"
-  end
+  end                                                                                                                                                                
+  
+  response.headers['P3P'] = 'CP="CURa ADMa DEVa PSAo PSDo OUR BUS UNI PUR INT DEM STA PRE COM NAV OTC NOI DSP COR"' #fix for IE and Safari iFrame infinite loop.     
 end
 
 helpers do
