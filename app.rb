@@ -12,7 +12,7 @@ set :show_exceptions, false
 # permissions your app needs.
 # See https://developers.facebook.com/docs/reference/api/permissions/
 # for a full list of permissions
-FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags'
+FACEBOOK_SCOPE = 'user_likes,user_photos'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
@@ -46,6 +46,17 @@ helpers do
     @authenticator ||= Koala::Facebook::OAuth.new(ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_SECRET"], url("/auth/facebook/callback"))
   end
 
+  # allow for javascript authentication
+  def access_token_from_cookie
+    authenticator.get_user_info_from_cookies(request.cookies)['access_token']
+  rescue => err
+    warn err.message
+  end
+
+  def access_token
+    session[:access_token] || access_token_from_cookie
+  end
+
 end
 
 # the facebook session expired! reset ours and restart the process
@@ -56,12 +67,12 @@ end
 
 get "/" do
   # Get base API Connection
-  @graph  = Koala::Facebook::API.new(session[:access_token])
+  @graph  = Koala::Facebook::API.new(access_token)
 
   # Get public details of current application
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
-  if session[:access_token]
+  if access_token
     @user    = @graph.get_object("me")
     @friends = @graph.get_connections('me', 'friends')
     @photos  = @graph.get_connections('me', 'photos')
@@ -83,17 +94,21 @@ get "/close" do
   "<body onload='window.close();'/>"
 end
 
-get "/sign_out" do
+# Doesn't actually sign out permanently, but good for testing
+get "/preview/logged_out" do
   session[:access_token] = nil
+  request.cookies.keys.each { |key, value| response.set_cookie(key, '') }
   redirect '/'
 end
 
+
+# Allows for direct oauth authentication
 get "/auth/facebook" do
   session[:access_token] = nil
   redirect authenticator.url_for_oauth_code(:permissions => FACEBOOK_SCOPE)
 end
 
 get '/auth/facebook/callback' do
-	session[:access_token] = authenticator.get_access_token(params[:code])
-	redirect '/'
+  session[:access_token] = authenticator.get_access_token(params[:code])
+  redirect '/'
 end
