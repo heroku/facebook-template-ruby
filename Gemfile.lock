@@ -11,13 +11,13 @@ GEM
       rack (~> 1.1)
     httparty (0.7.8)
       crack (= 0.1.8)
-    json (1.5.4)
+    json (1.5.5)
     koala (1.3.0)
       faraday (~> 0.7.0)
       multi_json (~> 1.0)
     multi_json (1.0.3)
     multipart-post (1.1.5)
-    rack (1.3.2)
+    rack (1.3.10)
     sinatra (1.2.6)
       rack (~> 1.1)
       tilt (>= 1.2.2, < 2.0)
@@ -32,7 +32,8 @@ PLATFORMS
 
 DEPENDENCIES
   httparty
-  json
+  json (= 1.5.5)
   koala
+  rack (= 1.3.10)
   sinatra
   thin
