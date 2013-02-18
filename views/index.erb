@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:fb="http://ogp.me/ns/fb#" lang="en">
+<html xmlns:fb="https://ogp.me/ns/fb#" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
@@ -24,6 +24,8 @@
     <meta property="og:site_name" content="<%= @app['name'] %>" />
     <meta property="og:description" content="My First App" />
     <meta property="fb:app_id" content="<%= @app['name'] %>" />
+    
+    <base target="_blank" />
 
     <script type="text/javascript" src="/javascripts/jquery-1.7.1.min.js"></script>
 
@@ -182,7 +184,7 @@
             <ul class="friends">
               <% @friends.each do |friend| %>
                 <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend['id']%>')">
+                  <a href="https://www.facebook.com/<%= friend['id'] %>" target="_blank">
                     <img src="https://graph.facebook.com/<%= friend['id'] %>/picture?type=square" alt="<%= friend['name'] %>">
                     <%= friend['name'] %>
                   </a>
@@ -196,7 +198,7 @@
             <ul class="photos">
               <% @photos.each_with_index do |photo, index| %>
                 <li style="background-image: url(<%= photo['picture'] %>)" class='<%= 'first-column' if (index%4).zero? %>'>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= photo['id'] %>')">
+                  <a href="https://www.facebook.com/<%= photo['id'] %>" target="_blank">
                     <%= photo['name'] %>
                   </a>
                 </li>
@@ -209,7 +211,7 @@
             <ul class="things">
               <% @likes.each do |like| %>
                 <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= like['id'] %>')">
+                  <a href="https://www.facebook.com/<%= like['id'] %>" target="_blank">
                     <img src="https://graph.facebook.com/<%= like['id'] %>/picture?type=square" alt="<%= like['name'] %>">
                     <%= like['name'] %>
                   </a>
@@ -223,7 +225,7 @@
             <ul class="friends">
               <% @friends_using_app.each do |friend_result| %>
                 <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend_result['uid'] %>')">
+                  <a href="https://www.facebook.com/<%= friend_result['uid'] %>" target="_blank">
                     <img src="<%= friend_result['pic_square'] %>" alt="<%= friend_result['name'] %>">
                     <%= friend_result['name'] %>
                   </a>
